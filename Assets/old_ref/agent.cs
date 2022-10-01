@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// an class that defines the basic properties of a reinforcement learning agent
 /// </summary>
-public class Agent
+public class FishAgentOld
 {
     /// <summary>
     /// [i, j, k, w]
@@ -18,12 +18,12 @@ public class Agent
     public Quaternion move_tensor_0;
 
     /// <summary>
-    /// contains the [x, y, z] coordinates for the Agent's current position in 3-space
+    /// contains the [x, y, z] coordinates for the FishAgentOld's current position in 3-space
     /// </summary>
     public Vector3 pos_tensor;
 
     /// <summary>
-    /// contains the [dx, dy, dz] velocities that define the Agent's current speed
+    /// contains the [dx, dy, dz] velocities that define the FishAgentOld's current speed
     /// </summary>
     public Vector3 vel_tensor;
 
@@ -102,7 +102,7 @@ public class Agent
     /// <param name="name">name of agent (e.g. predator)</param>
     /// <param name="time_lim">time to end simulation</param>
     /// <param name="nr_reward_bins">the number of bins to use for approximating the reward distribution</param>
-    public Agent(string name,
+    public FishAgentOld(string name,
                 int time_lim,
                 int nr_reward_bins,
                 Quaternion initial_orient,
@@ -115,7 +115,7 @@ public class Agent
                 float reward_rate)
     {
     
-        Agent.time_lim = time_lim;
+        FishAgentOld.time_lim = time_lim;
         this.name = name;
         this.thresh = thresh;
         this.current_input_v=0f;
@@ -181,7 +181,7 @@ public class Agent
         update_velocity(transform);
     }
 
-    public static int increment_time(int time, Agent agent, Transform transform)
+    public static int increment_time(int time, FishAgentOld agent, Transform transform)
     { // call before or after reward function
         if(time + 1 < time_lim)
         {
