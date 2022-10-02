@@ -9,20 +9,29 @@ public class FishAgent : Agent
     FishModel model;
     public float distance_noise=0.4f;
     public float ambient_noise=0.04f;
-    public float sensor_limit=3f;
+    public float sensor_limit=30f;
     public bool negative_agent=false;
     public bool bumper_agent=false;
     public float dof_noise=0.2f;
     public float vel_noise=0.4f;
     public float signal=0f;
+    public float broadcast=0f;
+    public int batch=0;
     // Start is called before the first frame update
-    void Initialize()
+    public override void Initialize()
     {
         model=GetComponent<FishModel>();
+      	model.transform.position=new Vector3(Random.value*120+batch*99999,Random.value*120+batch*99999,Random.value*120+batch*99999);
     }
+    public override void OnEpisodeBegin(){    
+	    Reset();
+    }
+    public void Reset(){
+    if(model==null){
     
-    public override void OnEpisodeBegin(){
-      model.transform.position=new Vector3(Random.value,Random.value,Random.value);
+        model=GetComponent<FishModel>();
+    }
+     	model.transform.position=new Vector3(Random.value*120,Random.value*120,Random.value*120);
       float theta=Random.value;
       model.transform.forward=new Vector3(Mathf.Cos(theta),0f,Mathf.Sin(theta)).normalized;
       model.U=Random.value*model.l;
@@ -30,6 +39,7 @@ public class FishAgent : Agent
     }
     public override void CollectObservations(VectorSensor sensor){
     	RaycastHit hitinfo;
+	sensor.AddObservation((float)model.time);
     	if(Physics.Raycast(model.transform.position, model.transform.forward, out hitinfo, sensor_limit)){
 	    	float r=hitinfo.distance;
 	    	float noise=((float)FishModel.RandomNormal())*distance_noise*(r)/sensor_limit;
@@ -55,7 +65,7 @@ public class FishAgent : Agent
     }
     public override void OnActionReceived(ActionBuffers actionBuffers){
 	model.pulse=actionBuffers.ContinuousActions[0];
-	float broadcast=actionBuffers.ContinuousActions[1];
+	broadcast=actionBuffers.ContinuousActions[1];
 	
 	var potential_neighbors=FindObjectsOfType<FishAgent>();
 	foreach(var agent in potential_neighbors){
@@ -88,7 +98,8 @@ public class FishAgent : Agent
 	Vector3 mean_speed=new Vector3(0,0,0);
 	var potential_neighbors=FindObjectsOfType<FishAgent>();
 	foreach(var agent in potential_neighbors){
-
+		if(agent.model==null) continue;
+			
 		float r=(transform.position-agent.transform.position).magnitude;
 		if(r<sensor_limit){
 			float a=((float)FishModel.RandomNormal())*vel_noise*r/sensor_limit;
@@ -103,4 +114,11 @@ public class FishAgent : Agent
 		SetReward(signal>0?100:-100);
 	}
      }
+     
+    public override void Heuristic(in ActionBuffers actionsOut)
+    {
+	    var continuousActionsOut = actionsOut.ContinuousActions;
+	    continuousActionsOut[0] = Input.GetAxis("Horizontal");
+	    continuousActionsOut[1] = Input.GetAxis("Vertical");
+    }
 }

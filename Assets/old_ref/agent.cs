@@ -266,7 +266,6 @@ public class FishAgentOld
         dist0 = dist; // store previous distance
         R0 = R; // ""
         v0 = velocity; // ""
-        float vnew=0, wnew=0;
         
         if(D.x==0)
         {

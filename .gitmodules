@@ -1,0 +1,4 @@
+[submodule "RL/ml-agents"]
+	path = RL/ml-agents
+	url = https://github.com/Unity-Technologies/ml-agents.git
+	branch = exp-ma-gym

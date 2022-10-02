@@ -152,9 +152,9 @@ public class FishModel : MonoBehaviour
    	y2=new double[N*2];
    	y3=new double[N*2];
    	y4=new double[N*2];
-   	double a1,a2,a3,a4,b1,b2,b3,b4,c1,c2,c3,c4;
-   	double u1,u2,u3,u4,v1,v2,v3,v4,w1,w2,w3,w4;
-  	double z1,z2,z3,z4,x1,x2,x3,x4,theta1,theta2,theta3,theta4;
+   	double a1,a2,a3,a4,b1,b2,b3,b4;
+   	double u1,u2,u3,u4,v1,v2,v3,v4;
+  	double z1,z2,z3,z4,x1,x2,x3,x4;
    	for(int i=0; i<N; ++i){
    		y1[i]=h[i];
    		y1[i+N]=hdot[i];	
@@ -271,6 +271,8 @@ public class FishModel : MonoBehaviour
     {
     	if(time==0){
     		InitParams();
+		x=Vector3.Dot(transform.position,transform.forward);
+		y=Vector3.Dot(transform.position,transform.right);
     	}
     	h[0]=H0*Math.Sin(omega*time-kappa*x0)*(0.1+pulse);
   	hdot[0]=H0*omega*Math.Cos(omega*time-kappa*x0)*(0.1+pulse)+RandomNormal()*noise;
@@ -281,7 +283,7 @@ public class FishModel : MonoBehaviour
 	}
 	Vector3 pos0=transform.position;
         transform.position=((float)x)*transform.forward+(float)y*transform.right;
-        U+=0.0001*((transform.position-pos0).magnitude-U*Time.deltaTime)-0.001*U*Time.deltaTime;
+        U=U*0.9+0.0001*((transform.position-pos0).magnitude-U);
         transform.Rotate(0f,(float)Math.Asin((h[0]-h[h.Length-1])/l),0f,Space.World);
         double d=l/articulated_body.Length;
         int stride=h.Length/articulated_body.Length;
